@@ -1,10 +1,37 @@
-
 <div class="camera-container">
-    <img [src]="imgUrl" alt="Captured Image" class="captured-image">
+    <!-- Área de visualización de la foto principal -->
+    <div class="main-photo-area">
+        <img *ngIf="imgUrl" [src]="imgUrl" alt="Captured Image" class="captured-image">
+        <div *ngIf="!imgUrl" class="no-image">
+            <p>No hay imagen capturada</p>
+        </div>
+    </div>
 
-    <button (click)="takePicture()" class="take-picture-button">📷 Toma una Foto</button>
+    <!-- Botón para tomar fotos -->
+    <button (click)="takePicture()" class="take-picture-button" [disabled]="loading">
+        <span *ngIf="!loading">📷 Toma una Foto</span>
+        <span *ngIf="loading">Cargando...</span>
+    </button>
 
+    <!-- Mensaje de error -->
     <div *ngIf="errorMessage" class="error-message">
         {{ errorMessage }}
+    </div>
+
+    <!-- Galería de fotos -->
+    <div *ngIf="photos.length > 0" class="gallery-container">
+        <h3>Galería de fotos</h3>
+        <div class="photo-gallery">
+            <div *ngFor="let photo of photos; let i = index" class="photo-item">
+                <img [src]="photo.url" alt="Photo {{i+1}}" (click)="setMainPhoto(photo)">
+                <div class="photo-controls">
+                    <button class="view-btn" (click)="setMainPhoto(photo)">👁️</button>
+                    <button class="delete-btn" (click)="deletePhoto(i)">🗑️</button>
+                </div>
+                <span class="photo-time">
+                    {{ photo.timestamp | date:'shortTime' }}
+                </span>
+            </div>
+        </div>
     </div>
 </div>
