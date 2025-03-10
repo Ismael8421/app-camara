@@ -1,21 +1,8 @@
 import { NgIf, NgFor, DatePipe, NgClass } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CameraService } from '../../services/camera.service';
-
-interface PhotoItem {
-  url: string;
-  timestamp: Date;
-}
-
-interface ReportItem {
-  id: string;
-  imageUrl: string;
-  timestamp: Date;
-  technician: string;
-  status: string;
-  description: string;
-}
+import { CameraService, PhotoItem, ReportItem } from '../../services/camera.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-camera',
@@ -24,47 +11,62 @@ interface ReportItem {
   templateUrl: './camera.component.html',
   styleUrl: './camera.component.css'
 })
-export class CameraComponent {
+export class CameraComponent implements OnInit, OnDestroy {
   cameraService: CameraService = inject(CameraService);
   
-  // Original properties from your code
+  // Propiedades para la interfaz
   imgUrl: string = '';
-  photos: PhotoItem[] = [];
   errorMessage: string = '';
   loading: boolean = false;
   
-  // New properties for the maintenance reports
-  currentReport: ReportItem = {
-    id: '',
-    imageUrl: '',
-    timestamp: new Date(),
-    technician: '',
-    status: 'Activo',
-    description: ''
-  };
-  
+  // Propiedades para los reportes de mantenimiento
+  currentReport: ReportItem = this.getEmptyReport();
   reports: ReportItem[] = [];
   
-  // Original methods from your code
+  // Suscripciones
+  private subscriptions: Subscription[] = [];
+  
+  ngOnInit() {
+    // Suscribirse a los reportes
+    this.subscriptions.push(
+      this.cameraService.reports$.subscribe(reports => {
+        this.reports = reports;
+      })
+    );
+    
+    // Suscribirse al borrador de reporte
+    this.subscriptions.push(
+      this.cameraService.draftReport$.subscribe(draft => {
+        if (draft) {
+          this.currentReport = {...draft};
+        }
+      })
+    );
+  }
+  
+  ngOnDestroy() {
+    // Guardar el reporte actual como borrador antes de destruir el componente
+    this.saveDraftReport();
+    
+    // Cancelar todas las suscripciones
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+  
+  // Método para tomar una foto
   async takePicture() {
-    this.errorMessage = ''; // Limpiar mensajes de error anteriores
+    this.errorMessage = '';
     
     try {
       this.loading = true;
       
       try {
         const photoUrl = await this.cameraService.takePicture();
-        // Set the photo for the current report
+        // Establecer la foto para el reporte actual
         this.currentReport.imageUrl = photoUrl;
-        
-        // Also keep original functionality
         this.imgUrl = photoUrl;
         
-        // Añadimos la foto a la galería (original functionality)
-        this.photos.unshift({
-          url: photoUrl,
-          timestamp: new Date()
-        });
+        // Guardar el borrador actual
+        this.saveDraftReport();
       } catch (error) {
         if (String(error).includes('Not implemented on web')) {
           throw new Error('Esta función no está disponible en navegadores web. Por favor, usa la aplicación móvil.');
@@ -85,49 +87,52 @@ export class CameraComponent {
     }
   }
   
-  // Original methods
-  setMainPhoto(photo: PhotoItem) {
-    this.imgUrl = photo.url;
-  }
-  
-  deletePhoto(index: number) {
-    this.photos.splice(index, 1);
-    
-    if (this.photos.length > 0 && !this.photos.some(p => p.url === this.imgUrl)) {
-      this.imgUrl = this.photos[0].url;
-    } else if (this.photos.length === 0) {
-      this.imgUrl = '';
-    }
-  }
-  
-  // New methods for the maintenance reports
+  // Métodos para los reportes de mantenimiento
   saveReport() {
-    // If ID is not provided, generate one
+    // Completar datos del reporte
     if (!this.currentReport.id) {
       this.currentReport.id = `EQ-2024-${(this.reports.length + 1).toString().padStart(3, '0')}`;
     }
     
-    // Set timestamp to now
     this.currentReport.timestamp = new Date();
+    this.currentReport.technician = this.cameraService.getTechnicianName();
     
-    // Set default technician name (this would come from authentication in a real app)
-    this.currentReport.technician = this.getTechnicianName();
-    
-    // Add status if not set
     if (!this.currentReport.status) {
       this.currentReport.status = 'Activo';
     }
     
-    // Set description if empty
     if (!this.currentReport.description) {
       this.currentReport.description = 'Filtro de aire obstruido, necesita limpieza inmediata para evitar sobrecalentamiento.';
     }
     
-    // Add to reports list (create a copy to avoid reference issues)
-    this.reports.unshift({...this.currentReport});
+    // Añadir al servicio
+    this.cameraService.addReport({...this.currentReport});
     
-    // Reset current report
-    this.currentReport = {
+    // Resetear el reporte actual
+    this.currentReport = this.getEmptyReport();
+    this.imgUrl = '';
+  }
+  
+  viewReportDetails(report: ReportItem) {
+    this.imgUrl = report.imageUrl;
+    console.log('Viewing report details:', report);
+  }
+  
+  deleteReport(index: number) {
+    this.cameraService.deleteReport(index);
+  }
+  
+  // Guardar borrador del reporte actual
+  saveDraftReport() {
+    // Solo guardar si hay algún dato ingresado
+    if (this.currentReport.id || this.currentReport.imageUrl || this.currentReport.description) {
+      this.cameraService.saveDraftReport({...this.currentReport});
+    }
+  }
+  
+  // Método auxiliar para crear un reporte vacío
+  private getEmptyReport(): ReportItem {
+    return {
       id: '',
       imageUrl: '',
       timestamp: new Date(),
@@ -135,24 +140,5 @@ export class CameraComponent {
       status: 'Activo',
       description: ''
     };
-  }
-  
-  viewReportDetails(report: ReportItem) {
-    // For now, just view the image in the main display area
-    this.imgUrl = report.imageUrl;
-    
-    // In a real app, this would open a detailed view
-    console.log('Viewing report details:', report);
-  }
-  
-  deleteReport(index: number) {
-    this.reports.splice(index, 1);
-  }
-  
-  // Helper method to get technician name
-  // In a real app, this would come from authentication
-  private getTechnicianName(): string {
-    const technicians = ['Juan Perez', 'Pedro Escamoso', 'Poncración Paredes'];
-    return technicians[Math.floor(Math.random() * technicians.length)];
   }
 }
