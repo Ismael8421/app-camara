@@ -50,5 +50,5 @@ export class CameraService {
       console.error('Error en el servicio de cámara:', error);
       throw error;
     }
-  };
+  }
 }
