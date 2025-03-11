@@ -191,4 +191,21 @@ export class CameraService {
     const technicians = ['Juan Perez', 'Pedro Escamoso', 'Poncración Paredes'];
     return technicians[Math.floor(Math.random() * technicians.length)];
   }
+
+  updateReport(index: number, updatedReport: ReportItem): void {
+    const currentReports = [...this.reportsSubject.value];
+    
+    if (index >= 0 && index < currentReports.length) {
+      currentReports[index] = updatedReport;
+      this.reportsSubject.next(currentReports);
+      
+      // Actualizar almacenamiento local
+      this.saveReportsToStorage(currentReports);
+    }
+  }
+  
+  // Asegúrate de que este método exista en tu servicio para guardar en almacenamiento
+  private saveReportsToStorage(reports: ReportItem[]): void {
+    localStorage.setItem('maintenanceReports', JSON.stringify(reports));
+  }
 }

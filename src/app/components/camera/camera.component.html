@@ -1,6 +1,6 @@
 <div class="maintenance-report-container">
   <!-- Crear Nuevo Reporte Section -->
-  <div class="new-report-section">
+  <div class="new-report-section" *ngIf="!showDetailView">
     <h2>1. Crear Nuevo Reporte</h2>
     <p>Como técnico de mantenimiento, necesito poder documentar el estado de un equipo mediante:</p>
     
@@ -49,8 +49,82 @@
     </div>
   </div>
   
+  <!-- Vista Detallada de Reporte -->
+  <div class="report-detail-view" *ngIf="showDetailView && selectedReport">
+    <div class="detail-header">
+      <button (click)="closeDetailView()" class="back-btn">
+        &larr; Volver a la lista
+      </button>
+      <h2>Detalles del Reporte: {{ selectedReport.id }}</h2>
+    </div>
+    
+    <div class="detail-content">
+      <div class="detail-image-container">
+        <img 
+          [src]="selectedReport.imageUrl || '/assets/placeholder-300x150.png'" 
+          alt="Imagen del Reporte" 
+          class="detail-image"
+        >
+      </div>
+      
+      <div class="detail-info">
+        <div class="info-row">
+          <span class="info-label">ID:</span>
+          <span class="info-value">{{ selectedReport.id }}</span>
+        </div>
+        
+        <div class="info-row">
+          <span class="info-label">Fecha:</span>
+          <span class="info-value">{{ selectedReport.timestamp | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+        
+        <div class="info-row">
+          <span class="info-label">Técnico:</span>
+          <span class="info-value">{{ selectedReport.technician }}</span>
+        </div>
+        
+        <div class="info-row">
+          <span class="info-label">Estado:</span>
+          <span class="info-value status-indicator" [ngClass]="selectedReport.status.toLowerCase()">
+            {{ selectedReport.status }}
+          </span>
+          
+          <!-- Opciones para cambiar estado -->
+          <div class="status-options">
+            <button 
+              (click)="updateReportStatus(selectedReport, 'Activo')" 
+              class="status-btn activo"
+              [disabled]="selectedReport.status === 'Activo'"
+            >
+              Activo
+            </button>
+            <button 
+              (click)="updateReportStatus(selectedReport, 'En Revisión')" 
+              class="status-btn en-revision"
+              [disabled]="selectedReport.status === 'En Revisión'"
+            >
+              En Revisión
+            </button>
+            <button 
+              (click)="updateReportStatus(selectedReport, 'Completado')" 
+              class="status-btn completado"
+              [disabled]="selectedReport.status === 'Completado'"
+            >
+              Completado
+            </button>
+          </div>
+        </div>
+        
+        <div class="description-section">
+          <h3>Descripción del Problema:</h3>
+          <p class="detail-description">{{ selectedReport.description }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
   <!-- Visualizar Lista de Reportes Section -->
-  <div class="reports-list-section">
+  <div class="reports-list-section" *ngIf="!showDetailView">
     <h2>2. Visualizar Lista de Reportes</h2>
     <p>Como técnico, necesito ver todos los reportes creados de manera organizada:</p>
     
@@ -89,6 +163,11 @@
           Eliminar
         </button>
       </div>
+    </div>
+    
+    <!-- Mensaje cuando no hay reportes -->
+    <div *ngIf="reports.length === 0" class="no-reports-message">
+      <p>No hay reportes disponibles. Crea un nuevo reporte utilizando el formulario.</p>
     </div>
   </div>
 </div>

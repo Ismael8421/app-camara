@@ -23,6 +23,10 @@ export class CameraComponent implements OnInit, OnDestroy {
   currentReport: ReportItem = this.getEmptyReport();
   reports: ReportItem[] = [];
   
+  // Propiedad para el reporte seleccionado en Vista Detallada
+  selectedReport: ReportItem | null = null;
+  showDetailView: boolean = false;
+  
   // Suscripciones
   private subscriptions: Subscription[] = [];
   
@@ -114,11 +118,22 @@ export class CameraComponent implements OnInit, OnDestroy {
   }
   
   viewReportDetails(report: ReportItem) {
+    this.selectedReport = {...report};
+    this.showDetailView = true;
     this.imgUrl = report.imageUrl;
     console.log('Viewing report details:', report);
   }
   
+  closeDetailView() {
+    this.selectedReport = null;
+    this.showDetailView = false;
+  }
+  
   deleteReport(index: number) {
+    // Si estamos viendo los detalles del reporte que se va a eliminar, cerramos la vista
+    if (this.selectedReport && this.selectedReport.id === this.reports[index].id) {
+      this.closeDetailView();
+    }
     this.cameraService.deleteReport(index);
   }
   
@@ -140,5 +155,17 @@ export class CameraComponent implements OnInit, OnDestroy {
       status: 'Activo',
       description: ''
     };
+  }
+  
+  // Método para actualizar el estado de un reporte
+  updateReportStatus(report: ReportItem, newStatus: string) {
+    const index = this.reports.findIndex(r => r.id === report.id);
+    if (index !== -1) {
+      const updatedReport = {...report, status: newStatus};
+      this.cameraService.updateReport(index, updatedReport);
+      if (this.selectedReport && this.selectedReport.id === report.id) {
+        this.selectedReport = updatedReport;
+      }
+    }
   }
 }

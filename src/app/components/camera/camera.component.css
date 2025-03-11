@@ -1,284 +1,415 @@
-/* Main Container */
-.maintenance-report-container {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  color: #333;
+/* Estilos generales para la app */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
 }
 
-/* Section Styling */
-.new-report-section,
-.reports-list-section {
-  background-color: #fff;
+body {
+  background-color: #f7f7f7;
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 20px;
+  font-size: 16px;
+}
+
+.maintenance-report-container {
+  background-color: #ffffff;
+  width: 100%;
+  max-width: 800px;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Títulos */
+h2, h3 {
+  color: #00796b;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+h1 {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #00796b;
+}
+
+/* Crear Reporte Section */
+.new-report-section {
   margin-bottom: 30px;
 }
 
-h2 {
-  color: #2c3e50;
-  font-size: 1.5rem;
-  margin-top: 0;
-  margin-bottom: 16px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #eaeaea;
-}
-
-h3 {
-  color: #34495e;
-  font-size: 1.2rem;
-  margin-bottom: 20px;
-}
-
-p {
-  color: #5d6778;
-  line-height: 1.5;
-  margin-bottom: 20px;
-}
-
-/* Form Styling */
-.report-form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-label {
-  font-weight: 600;
+/* Formulario de Reporte */
+.report-form label {
+  font-weight: bold;
   margin-bottom: 5px;
   display: block;
-  color: #2c3e50;
 }
 
-input, textarea {
-  width: 100%;
+.report-form input,
+.report-form textarea,
+.report-form button {
+  margin-bottom: 15px;
   padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-  transition: border-color 0.3s;
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #ccc;
 }
 
-input:focus, textarea:focus {
-  outline: none;
-  border-color: #3498db;
-  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+.report-form input,
+.report-form textarea {
+  font-size: 14px;
 }
 
-textarea {
-  min-height: 120px;
-  resize: vertical;
+.report-form textarea {
+  height: 120px;
+  resize: none;
+}
+
+.report-form button {
+  background-color: #00796b;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  text-align: center;
+}
+
+.report-form button:hover {
+  background-color: #004d40;
+}
+
+.error-message {
+  color: #f44336;
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: center;
 }
 
 /* Image Capture Area */
 .image-capture-area {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  gap: 15px;
-  margin: 15px 0;
+  flex-direction: column;
+  margin-bottom: 15px;
 }
 
-.captured-image, .no-image {
+.image-capture-area img {
+  max-width: 100%;
   width: 300px;
   height: 150px;
-  border-radius: 6px;
   object-fit: cover;
-  border: 1px dashed #ccc;
+  border-radius: 8px;
 }
 
 .no-image {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #f8f9fa;
-  color: #adb5bd;
-  font-size: 1.2rem;
-}
-
-/* Buttons */
-button {
-  cursor: pointer;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 4px;
-  font-weight: 600;
-  transition: all 0.2s ease;
+  background-color: #e0f7fa;
+  width: 300px;
+  height: 150px;
+  border-radius: 8px;
 }
 
 .take-picture-button {
-  background-color: #3498db;
+  background-color: #00796b;
   color: white;
-  width: 100%;
-  max-width: 300px;
+  padding: 12px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border-radius: 8px;
 }
 
-.take-picture-button:hover:not([disabled]) {
-  background-color: #2980b9;
-}
-
-.take-picture-button[disabled] {
-  background-color: #95a5a6;
+.take-picture-button:disabled {
+  background-color: #80cbc4;
   cursor: not-allowed;
-  opacity: 0.7;
 }
 
-.save-report-btn {
-  background-color: #2ecc71;
-  color: white;
-  margin-top: 10px;
+.take-picture-button:hover {
+  background-color: #004d40;
 }
 
-.save-report-btn:hover {
-  background-color: #27ae60;
-}
-
-.view-details-btn {
-  background-color: #3498db;
-  color: white;
-}
-
-.view-details-btn:hover {
-  background-color: #2980b9;
-}
-
-.delete-report-btn {
-  background-color: #e74c3c;
-  color: white;
-}
-
-.delete-report-btn:hover {
-  background-color: #c0392b;
-}
-
-/* Error Message */
-.error-message {
-  background-color: #fdecea;
-  color: #e74c3c;
-  padding: 12px;
-  border-radius: 4px;
-  border-left: 4px solid #e74c3c;
-  margin-top: 15px;
-}
-
-/* Reports List */
-.report-item {
+/* Detalles del Reporte */
+.report-detail-view {
   display: flex;
-  border: 1px solid #eaeaea;
-  border-radius: 6px;
+  flex-direction: column;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
-  overflow: hidden;
-  transition: box-shadow 0.3s;
 }
 
-.report-item:hover {
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+.back-btn {
+  background-color: #00796b;
+  color: white;
+  border: none;
+  font-size: 14px;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
 }
 
-.report-image {
-  flex: 0 0 300px;
+.back-btn:hover {
+  background-color: #004d40;
 }
 
-.report-thumbnail {
+.detail-image-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.detail-image {
+  max-width: 100%;
   width: 300px;
   height: 150px;
   object-fit: cover;
-  display: block;
+  border-radius: 8px;
+}
+
+.detail-info {
+  margin-top: 20px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.info-label {
+  font-weight: bold;
+  color: #00796b;
+}
+
+.info-value {
+  font-size: 14px;
+}
+
+.status-indicator {
+  font-weight: bold;
+}
+
+.status-options {
+  margin-top: 10px;
+}
+
+.status-btn {
+  padding: 10px 15px;
+  font-size: 14px;
+  margin-right: 10px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.status-btn.activo {
+  background-color: #388e3c;
+  color: white;
+}
+
+.status-btn.en-revision {
+  background-color: #ff9800;
+  color: white;
+}
+
+.status-btn.completado {
+  background-color: #2196f3;
+  color: white;
+}
+
+.status-btn:disabled {
+  background-color: #b0bec5;
+  cursor: not-allowed;
+}
+
+/* Lista de Reportes */
+.reports-list-section {
+  margin-top: 30px;
+}
+
+.report-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: #f1f1f1;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  padding: 10px;
+}
+
+.report-image img {
+  width: 100%;
+  height: 100px;
+  max-width: 150px;
+  object-fit: cover;
+  border-radius: 8px;
 }
 
 .report-details {
   flex: 1;
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
+  padding-left: 15px;
 }
 
 .report-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
-  font-size: 0.9rem;
-  color: #7f8c8d;
-}
-
-.report-id {
-  font-weight: 600;
-  color: #34495e;
+  font-size: 14px;
+  color: #00796b;
 }
 
 .report-description {
-  flex: 1;
-  margin: 0 0 15px 0;
-  line-height: 1.5;
+  font-size: 14px;
+  color: #555;
 }
 
 .report-footer {
-  display: flex;
-  justify-content: flex-start;
+  margin-top: 10px;
 }
 
 .report-status {
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.report-status.pending {
-  background-color: #fff3cd;
-  color: #856404;
-}
-
-.report-status.completed {
-  background-color: #d4edda;
-  color: #155724;
-}
-
-.report-status.inprogress {
-  background-color: #cce5ff;
-  color: #004085;
+  font-weight: bold;
 }
 
 .report-actions {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 10px;
-  padding: 15px;
-  background-color: #f8f9fa;
+  align-items: flex-end;
 }
 
-/* Responsive Design */
+.view-details-btn,
+.delete-report-btn {
+  padding: 8px 12px;
+  background-color: #00796b;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  margin-top: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.view-details-btn:hover,
+.delete-report-btn:hover {
+  background-color: #004d40;
+}
+
+/* Mensaje cuando no hay reportes */
+.no-reports-message {
+  text-align: center;
+  font-size: 16px;
+  color: #777;
+}
+
+/* Estilos responsivos */
 @media (max-width: 768px) {
+  .maintenance-report-container {
+    padding: 15px;
+  }
+
+  h2, h3 {
+    font-size: 20px;
+  }
+
+  .report-form input,
+  .report-form textarea,
+  .report-form button {
+    font-size: 14px;
+  }
+
+  .image-capture-area {
+    margin-bottom: 10px;
+  }
+
+  .detail-image {
+    width: 100%;
+    height: auto;
+  }
+
   .report-item {
     flex-direction: column;
+    align-items: center;
   }
-  
-  .report-image {
-    flex: 0 0 auto;
-  }
-  
-  .report-thumbnail {
+
+  .report-image img {
     width: 100%;
-    height: 150px;
+    height: 100px;
+    max-width: 300px;
   }
-  
+
   .report-actions {
-    flex-direction: row;
-    justify-content: space-between;
+    align-items: center;
   }
 }
 
 @media (max-width: 480px) {
-  .report-header {
-    flex-direction: column;
-    gap: 5px;
+  .maintenance-report-container {
+    padding: 10px;
   }
-  
-  .report-actions {
-    flex-direction: column;
+
+  h2, h3 {
+    font-size: 18px;
   }
+
+  .report-form input,
+  .report-form textarea,
+  .report-form button {
+    font-size: 12px;
+  }
+
+  .report-item {
+    padding: 10px;
+  }
+}
+
+/* Estilos generales para las imágenes de los reportes */
+.report-thumbnail, .detail-image {
+  width: 300px; /* Ancho fijo de 300px */
+  height: 150px; /* Alto fijo de 150px */
+  object-fit: cover; /* Ajusta la imagen para que se recorte proporcionalmente */
+  border-radius: 8px; /* Bordes redondeados para las imágenes */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra sutil para destacar las imágenes */
+}
+
+/* En la vista de detalle, la imagen principal también debe ser de 300x150 */
+.detail-image-container img {
+  width: 300px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos generales para las imágenes en la lista de reportes */
+.report-item .report-image img {
+  width: 300px; /* Ancho fijo de 300px */
+  height: 150px; /* Alto fijo de 150px */
+  object-fit: cover; /* Ajusta la imagen para que se recorte proporcionalmente */
+  border-radius: 8px; /* Bordes redondeados */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+}
+
+/* Estilos para la imagen en la vista detallada */
+.detail-image-container img {
+  width: 300px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
