@@ -41,7 +41,7 @@ export class CameraService {
     try {
       const permissions = await Camera.checkPermissions();
       
-      if (permissions.camera === 'prompt') {
+      if (permissions.camera === 'prompt' || permissions.photos === 'prompt') {
         await Camera.requestPermissions();
       }
     } catch (error) {
@@ -55,12 +55,12 @@ export class CameraService {
       
       const image = await Camera.getPhoto({
         quality: 90,
-        allowEditing: false,
+        allowEditing: true,
         resultType: CameraResultType.DataUrl,
-        source: CameraSource.Camera,
+        source: CameraSource.Photos, // Cambiado de Camera a Photos para abrir la galería
         webUseInput: true,
         // Para guardar en la galería de Android
-        saveToGallery: this.platform.is('android')
+        saveToGallery: false // Cambiado a false ya que estamos obteniendo de la galería
       });
 
       if (image.dataUrl) {
@@ -85,6 +85,8 @@ export class CameraService {
       throw error;
     }
   }
+  
+  // El resto del código permanece igual...
   
   // Métodos para manejar reportes
   getReports(): ReportItem[] {
